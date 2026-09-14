@@ -33,19 +33,20 @@
 
   <div class="panel">
     <h2>Tableau de comparaison</h2>
-    <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%), RP 2023 — familles = couples sans enfant + couples avec enfant(s) + familles monoparentales</p>
+    <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%), RP 2023, et évolution du nombre de familles monoparentales entre les RP 2017 et 2023 — familles = couples sans enfant + couples avec enfant(s) + familles monoparentales</p>
     <div class="tblwrap">
     <table class="tbl" id="tbl">
       <thead><tr>
         <th>Territoire</th>
         <th class="num">Familles</th>
         <th class="num">Fam. monoparentales</th>
-        <th>Part dans l'ensemble des familles</th>
+        <th>Part dans l'ensemble<br>des familles</th>
+        <th class="num" style="white-space:nowrap">Évolution 2017-2023<br><span style="font-weight:500;text-transform:none;letter-spacing:0">du nb de fam. monoparentales</span></th>
       </tr></thead>
       <tbody></tbody>
     </table>
     </div>
-    <p class="note"><b>Lecture :</b> à Melesse, 12,2 % des familles sont des familles monoparentales. La commune se situe au-dessus de son intercommunalité (10,2 %) mais en dessous du département (13,6 %), de la région (13,8 %) et de la France métropolitaine (16,8 %).</p>
+    <p class="note"><b>Lecture :</b> à Melesse, 12,2 % des familles sont des familles monoparentales. La commune se situe au-dessus de son intercommunalité (10,2 %) mais en dessous du département (13,6 %), de la région (13,8 %) et de la France métropolitaine (16,8 %). Entre 2017 et 2023, le nombre de familles monoparentales y a progressé de 22,8 % (+50 familles), soit nettement plus vite que dans l'intercommunalité (+8,8 %), le département (+14,1 %), la région (+12,3 %) ou la France métropolitaine (+10,2 %) — une hausse à relier à la forte croissance du nombre de familles à Melesse sur la période (+15,2 %).</p>
   </div>
 
   <div class="panel">
@@ -68,6 +69,7 @@
     <p class="note" style="margin-top:0">
       <b>Indicateur :</b> nombre de familles monoparentales / nombre total de familles × 100, le total incluant les couples sans enfant.<br>
       <b>Commune, EPCI, département, région, France :</b> INSEE, RP 2023, base communale « Couples – Familles – Ménages » ; les agrégats sont obtenus en sommant les effectifs communaux selon la table d'appartenance géographique (EPCI, département, région). France métropolitaine = communes hors départements d'outre-mer.<br>
+      <b>Évolution 2017-2023 :</b> INSEE, RP 2017 et RP 2023, bases communales en géographie courante ; taux d'évolution du nombre de familles monoparentales sur six ans (huit communes sans donnée en 2017 sont exclues de l'agrégat France métropolitaine).<br>
       Les effectifs issus du recensement sont des estimations pondérées ; ils sont arrondis à l'unité dans les tableaux.
     </p>
   </div>
@@ -77,7 +79,7 @@
 <footer>
   <div class="wrap">
     <span>Démonstrateur réalisé par <strong>COPAS</strong> – coopérative de conseil</span>
-    <span>Sources : INSEE, recensement de la population 2023</span>
+    <span>Sources : INSEE, recensements de la population 2017 et 2023</span>
   </div>
 </footer>
 
@@ -91,6 +93,13 @@
   const maxPart = Math.max(...rows.map(r => r.part));
 
   /* ---- tableau ---- */
+  const fmtS = (v, dec) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toLocaleString('fr-FR',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+  const evoCell = r => {
+    if (!r.mono17) return '<span style="color:var(--muted)">–</span>';
+    const taux = (r.mono - r.mono17) / r.mono17 * 100;
+    const html = `<b>${fmtS(taux,1)} %</b>`;
+    return r.niveau === 'Commune' ? `${html}<br><span style="font-size:12px;color:var(--ink-2)">${fmtS(Math.round(r.mono - r.mono17),0)} familles (${fmtN(r.mono17)} → ${fmtN(r.mono)})</span>` : html;
+  };
   const tb = document.querySelector('#tbl tbody');
   rows.forEach(r => {
     const tr = document.createElement('tr');
@@ -99,7 +108,8 @@
       <td><span class="lvl">${r.niveau}</span>${r.lib}</td>
       <td class="num">${fmtN(r.fam)}</td>
       <td class="num">${fmtN(r.mono)}</td>
-      <td><div class="bar"><i style="width:${(r.part/maxPart*140).toFixed(0)}px"></i><b>${fmtP(r.part)}</b></div></td>`;
+      <td><div class="bar"><i style="width:${(r.part/maxPart*110).toFixed(0)}px"></i><b>${fmtP(r.part)}</b></div></td>
+      <td class="num">${evoCell(r)}</td>`;
     tb.appendChild(tr);
   });
 

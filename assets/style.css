@@ -67,12 +67,13 @@ nav.main a.active,nav.main a:hover{color:var(--teal);border-bottom-color:var(--t
 .tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .tbl th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 .tbl td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl td:first-child{white-space:nowrap}
 .tbl tr:last-child td{border-bottom:0}
 .tbl td.num,.tbl th.num{text-align:right}
 .tbl .lvl{display:inline-block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:8px;min-width:88px}
 .tbl tr.hl td{background:var(--teal-soft)}
 .tbl tr.hl td:first-child{border-left:3px solid var(--teal)}
-.bar{display:flex;align-items:center;gap:8px;min-width:180px}
+.bar{display:flex;align-items:center;gap:8px;min-width:170px}
 .bar i{display:block;height:10px;border-radius:0 4px 4px 0;background:var(--teal)}
 .bar b{font-weight:600;font-size:14px}
 .tblwrap{overflow-x:auto}
