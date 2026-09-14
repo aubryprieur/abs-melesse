@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Famille – Observatoire social de Melesse</title>
+<link rel="stylesheet" href="assets/leaflet/leaflet.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <div class="mark">M</div>
+      <div><strong>Observatoire social de Melesse</strong><span>Analyse des besoins sociaux · CCAS</span></div>
+    </a>
+    <nav class="main">
+      <a href="index.html">Accueil</a>
+      <a href="famille.html" class="active">Famille</a>
+    </nav>
+  </div>
+</header>
+
+<section class="pagehead">
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Accueil</a> › Famille</div>
+    <h1>Part des familles monoparentales dans l'ensemble des familles</h1>
+    <p>Nombre de familles monoparentales rapporté à l'ensemble des familles, couples sans enfant compris. L'indicateur est calculé pour les deux IRIS de Melesse, puis agrégé à partir des données communales pour l'intercommunalité, le département, la région et la France métropolitaine.</p>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <div class="panel">
+    <h2>Tableau de comparaison</h2>
+    <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%) — familles = couples sans enfant + couples avec enfant(s) + familles monoparentales</p>
+    <div class="tblwrap">
+    <table class="tbl" id="tbl">
+      <thead><tr>
+        <th>Territoire</th>
+        <th class="num">Familles</th>
+        <th class="num">Fam. monoparentales</th>
+        <th>Part dans l'ensemble des familles</th>
+        <th class="num">Année</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <p class="note"><b>Lecture :</b> dans l'IRIS Agglomération, 15,4 % des familles sont des familles monoparentales, contre 9,4 % dans l'IRIS Hors Agglomération. La commune (12,2 %) se situe au-dessus de son intercommunalité (10,2 %) mais en dessous du département, de la région et de la France métropolitaine (16,8 %).</p>
+  </div>
+
+  <div class="panel">
+    <h2>Position de Melesse dans son intercommunalité</h2>
+    <p class="sub">Part des familles monoparentales dans les 19 communes de la CC Val d'Ille-Aubigné (RP 2023)</p>
+    <div id="strip"></div>
+    <p class="note" id="stripnote"></p>
+  </div>
+
+  <div class="panel">
+    <h2>Carte des IRIS de Melesse</h2>
+    <p class="sub">Part des familles monoparentales par IRIS (RP 2022) — survolez ou cliquez un IRIS</p>
+    <div id="map"></div>
+    <p class="note">Contours IRIS 2024 (IGN / INSEE). Fond de carte : Plan IGN ou photo aérienne © IGN – Géoplateforme.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Méthode et sources</h2>
+    <p class="note" style="margin-top:0">
+      <b>Indicateur :</b> nombre de familles monoparentales / nombre total de familles × 100, le total incluant les couples sans enfant.<br>
+      <b>IRIS :</b> INSEE, RP 2022, base infra-communale « Couples – Familles – Ménages » (variables C22_FAM et C22_FAMMONO).<br>
+      <b>Commune, EPCI, département, région, France :</b> INSEE, RP 2023, base communale « Couples – Familles – Ménages » ; les agrégats sont obtenus en sommant les effectifs communaux selon la table d'appartenance géographique (EPCI, département, région). France métropolitaine = communes hors départements d'outre-mer.<br>
+      Les effectifs issus du recensement sont des estimations pondérées ; ils sont arrondis à l'unité dans les tableaux.
+    </p>
+  </div>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>Démonstrateur réalisé par <strong>COPAS</strong> – coopérative de conseil</span>
+    <span>Sources : INSEE, recensements de la population 2022 (IRIS) et 2023 (communes)</span>
+  </div>
+</footer>
+
+<script src="assets/leaflet/leaflet.js"></script>
+<script src="assets/data.js"></script>
+<script>
+(function(){
+  const D = window.MELESSE_DATA;
+  const fmtN = n => Math.round(n).toLocaleString('fr-FR');
+  const fmtP = p => p.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' %';
+  const rows = D.rows.map(r => ({...r, part: r.mono / r.fam * 100}));
+  const maxPart = Math.max(...rows.map(r => r.part));
+
+  /* ---- tableau ---- */
+  const tb = document.querySelector('#tbl tbody');
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    if (r.niveau === 'IRIS') tr.className = 'hl';
+    tr.innerHTML = `
+      <td><span class="lvl">${r.niveau}</span>${r.lib}</td>
+      <td class="num">${fmtN(r.fam)}</td>
+      <td class="num">${fmtN(r.mono)}</td>
+      <td><div class="bar"><i style="width:${(r.part/maxPart*140).toFixed(0)}px"></i><b>${fmtP(r.part)}</b></div></td>
+      <td class="num">${r.annee}</td>`;
+    tb.appendChild(tr);
+  });
+
+  /* ---- position dans l'EPCI : graphique en ligne ---- */
+  (function(){
+    const vals = D.epci.map(c => c.part).sort((a,b)=>a-b);
+    const n = vals.length;
+    const med = rows.find(r => r.niveau === 'EPCI').part; // taux de l'EPCI (agrégé)
+    const mn = D.epci.reduce((a,c)=> c.part < a.part ? c : a);
+    const mx = D.epci.reduce((a,c)=> c.part > a.part ? c : a);
+    const me = D.epci.find(c => c.code === '35173');
+    const rang = D.epci.filter(c => c.part > me.part).length + 1;
+
+    const W = 860, H = 190, L = 24, R = 24, y = 96;
+    const lo = 0, hi = Math.ceil(mx.part / 2) * 2 + 2;
+    const x = v => L + (v - lo) / (hi - lo) * (W - L - R);
+    const f1 = v => v.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1});
+    const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+    let g = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Position de Melesse parmi les communes de l'EPCI" style="font-family:var(--font);max-width:${W}px;display:block;margin:6px auto 0">`;
+    g += `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#d9d5cc" stroke-width="2" stroke-linecap="round"/>`;
+    for (let v = 0; v <= hi; v += 2) {
+      g += `<line x1="${x(v)}" x2="${x(v)}" y1="${y-4}" y2="${y+4}" stroke="#d9d5cc"/>`;
+      g += `<text x="${x(v)}" y="${y+20}" font-size="10" fill="#8a8a8a" text-anchor="middle">${v} %</text>`;
+    }
+    g += `<line x1="${x(med)}" x2="${x(med)}" y1="${y-30}" y2="${y+8}" stroke="#D99A1B" stroke-width="2" stroke-dasharray="3 3"/>`;
+    g += `<text x="${x(med)}" y="${y-36}" font-size="11" fill="#D99A1B" font-weight="600" text-anchor="middle">EPCI ${f1(med)} %</text>`;
+    D.epci.forEach(c => { if (c.code !== me.code) g += `<circle cx="${x(c.part)}" cy="${y}" r="5" fill="#fff" stroke="#9A9A9A" stroke-width="1.5"><title>${esc(c.lib)} : ${f1(c.part)} %</title></circle>`; });
+    g += `<text x="${x(mn.part)}" y="${y+42}" font-size="11" fill="#4a4a4a" text-anchor="start">Min. ${f1(mn.part)} %</text>`;
+    g += `<text x="${x(mn.part)}" y="${y+56}" font-size="10" fill="#8a8a8a" text-anchor="start">${esc(mn.lib)}</text>`;
+    g += `<text x="${x(mx.part)}" y="${y+42}" font-size="11" fill="#4a4a4a" text-anchor="end">Max. ${f1(mx.part)} %</text>`;
+    g += `<text x="${x(mx.part)}" y="${y+56}" font-size="10" fill="#8a8a8a" text-anchor="end">${esc(mx.lib)}</text>`;
+    g += `<line x1="${x(me.part)}" x2="${x(me.part)}" y1="${y-14}" y2="${y-52}" stroke="#0E7C74" stroke-width="1.5"/>`;
+    g += `<circle cx="${x(me.part)}" cy="${y}" r="8" fill="#0E7C74" stroke="#fff" stroke-width="2"><title>Melesse : ${f1(me.part)} %</title></circle>`;
+    g += `<text x="${x(me.part)}" y="${y-58}" font-size="13" fill="#0E7C74" font-weight="700" text-anchor="middle">Melesse ${f1(me.part)} %</text>`;
+    g += `<text x="${x(me.part)}" y="${y-70}" font-size="10" fill="#0E7C74" text-anchor="middle">${rang}e sur ${n} communes</text>`;
+    g += `<circle cx="${L+4}" cy="${H-10}" r="4" fill="#fff" stroke="#9A9A9A" stroke-width="1.5"/><text x="${L+13}" y="${H-6}" font-size="10" fill="#8a8a8a">une commune de l'EPCI (survolez pour le nom)</text>`;
+    g += `</svg>`;
+    document.getElementById('strip').innerHTML = g;
+    document.getElementById('stripnote').innerHTML = `<b>Lecture :</b> avec ${f1(me.part)} % de familles monoparentales, Melesse se situe au-dessus du taux de son intercommunalité (${f1(med)} %), dans un éventail allant de ${f1(mn.part)} % (${esc(mn.lib)}) à ${f1(mx.part)} % (${esc(mx.lib)}).`;
+  })();
+
+  /* ---- carte ---- */
+  const map = L.map('map', {scrollWheelZoom:false});
+  const geopf = (layer, fmt) => 'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' + layer + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=' + fmt;
+  const planIGNgris = L.tileLayer(geopf('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'image/png'), {
+    maxZoom: 19, attribution: '© IGN – Géoplateforme', className: 'tiles-gris'
+  }).addTo(map);
+  const planIGN = L.tileLayer(geopf('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'image/png'), {
+    maxZoom: 19, attribution: '© IGN – Géoplateforme'
+  });
+  const orthoIGN = L.tileLayer(geopf('ORTHOIMAGERY.ORTHOPHOTOS', 'image/jpeg'), {
+    maxZoom: 19, attribution: '© IGN – Géoplateforme'
+  });
+  L.control.layers({'Plan IGN (gris)': planIGNgris, 'Plan IGN (couleur)': planIGN, 'Photo aérienne IGN': orthoIGN}, null, {position:'topright', collapsed:true}).addTo(map);
+
+  // rampe séquentielle (teal) entre 5 % et 18 %
+  const lo = 5, hi = 18;
+  const ramp = ['#e3f1ef','#a9d6d0','#5eb0a6','#0E7C74','#084d48'];
+  const color = p => {
+    const t = Math.max(0, Math.min(1, (p - lo) / (hi - lo)));
+    return ramp[Math.min(ramp.length - 1, Math.floor(t * ramp.length))];
+  };
+  const irisPart = code => { const r = rows.find(x => x.code === code); return r ? r.part : null; };
+
+  const layer = L.geoJSON(D.geojson, {
+    style: f => ({ color:'#fff', weight:2, fillColor: color(irisPart(f.properties.iris_code)), fillOpacity:.75 }),
+    onEachFeature: (f, l) => {
+      const r = rows.find(x => x.code === f.properties.iris_code);
+      l.bindTooltip(`<b>${f.properties.iris_name}</b><br>${fmtP(r.part)} de familles monoparentales`, {sticky:true});
+      l.bindPopup(`<div class="pop"><b>IRIS ${f.properties.iris_name}</b>
+        <div class="big">${fmtP(r.part)}</div>
+        <small>${fmtN(r.mono)} familles monoparentales sur ${fmtN(r.fam)} familles (RP ${r.annee})</small></div>`);
+      l.on('mouseover', () => l.setStyle({weight:3, fillOpacity:.9}));
+      l.on('mouseout', () => layer.resetStyle(l));
+    }
+  }).addTo(map);
+  map.fitBounds(layer.getBounds(), {padding:[20,20]});
+
+  // étiquettes au centre de chaque IRIS
+  // (l'IRIS Hors Agglomération entoure l'IRIS Agglomération : son étiquette est décalée vers l'ouest)
+  const layers = []; layer.eachLayer(l => layers.push(l));
+  layers.forEach(l => {
+    const b = l.getBounds(); let c = b.getCenter();
+    const other = layers.find(o => o !== l);
+    const w = bb => bb.getEast() - bb.getWest();
+    if (other && w(b) > w(other.getBounds())) {
+      // IRIS englobant : étiquette dans la partie est de la couronne
+      c = L.latLng(c.lat, b.getWest() + w(b) * 0.72);
+    } else if (other) {
+      // IRIS englobé (étroit) : étiquette juste à l'ouest de son contour
+      const ob = other.getBounds();
+      c = L.latLng(c.lat, b.getWest() - (ob.getEast() - ob.getWest()) * 0.13);
+    }
+    const r = rows.find(x => x.code === l.feature.properties.iris_code);
+    L.marker(c, {icon: L.divIcon({className:'', html:`<div style="display:inline-block;font:600 13px/1.2 var(--font);color:#1A1A1A;text-align:center;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 4px #fff;white-space:nowrap;transform:translate(-50%,-50%)">${l.feature.properties.iris_name}<br><span style="font-size:16px">${fmtP(r.part)}</span></div>`, iconSize:[0,0]}), interactive:false}).addTo(map);
+  });
+
+  const legend = L.control({position:'bottomright'});
+  legend.onAdd = () => {
+    const d = L.DomUtil.create('div','legend');
+    const step = (hi - lo) / ramp.length;
+    d.innerHTML = '<div class="t">Familles monoparentales</div>' + ramp.map((c,i) =>
+      `<div><span class="sw" style="background:${c}"></span>${(lo+i*step).toLocaleString('fr-FR',{maximumFractionDigits:1})} – ${(lo+(i+1)*step).toLocaleString('fr-FR',{maximumFractionDigits:1})} %</div>`).join('') +
+      `<div style="margin-top:6px;color:#8a8a8a">Commune : ${fmtP(rows.find(r=>r.niveau==='Commune').part)} · France métro. : ${fmtP(rows.find(r=>r.code==='FRM').part)}</div>`;
+    return d;
+  };
+  legend.addTo(map);
+})();
+</script>
+</body>
+</html>
