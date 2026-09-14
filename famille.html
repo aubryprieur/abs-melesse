@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Famille – Observatoire social de Melesse</title>
-<link rel="stylesheet" href="assets/leaflet/leaflet.css">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -26,7 +25,7 @@
   <div class="wrap">
     <div class="crumbs"><a href="index.html">Accueil</a> › Famille</div>
     <h1>Part des familles monoparentales dans l'ensemble des familles</h1>
-    <p>Nombre de familles monoparentales rapporté à l'ensemble des familles, couples sans enfant compris. L'indicateur est calculé pour les deux IRIS de Melesse, puis agrégé à partir des données communales pour l'intercommunalité, le département, la région et la France métropolitaine.</p>
+    <p>Nombre de familles monoparentales rapporté à l'ensemble des familles, couples sans enfant compris. L'indicateur est calculé pour Melesse, puis agrégé à partir des données communales pour l'intercommunalité, le département, la région et la France métropolitaine.</p>
   </div>
 </section>
 
@@ -34,7 +33,7 @@
 
   <div class="panel">
     <h2>Tableau de comparaison</h2>
-    <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%) — familles = couples sans enfant + couples avec enfant(s) + familles monoparentales</p>
+    <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%), RP 2023 — familles = couples sans enfant + couples avec enfant(s) + familles monoparentales</p>
     <div class="tblwrap">
     <table class="tbl" id="tbl">
       <thead><tr>
@@ -42,12 +41,11 @@
         <th class="num">Familles</th>
         <th class="num">Fam. monoparentales</th>
         <th>Part dans l'ensemble des familles</th>
-        <th class="num">Année</th>
       </tr></thead>
       <tbody></tbody>
     </table>
     </div>
-    <p class="note"><b>Lecture :</b> dans l'IRIS Agglomération, 15,4 % des familles sont des familles monoparentales, contre 9,4 % dans l'IRIS Hors Agglomération. La commune (12,2 %) se situe au-dessus de son intercommunalité (10,2 %) mais en dessous du département, de la région et de la France métropolitaine (16,8 %).</p>
+    <p class="note"><b>Lecture :</b> à Melesse, 12,2 % des familles sont des familles monoparentales. La commune se situe au-dessus de son intercommunalité (10,2 %) mais en dessous du département (13,6 %), de la région (13,8 %) et de la France métropolitaine (16,8 %).</p>
   </div>
 
   <div class="panel">
@@ -58,17 +56,9 @@
   </div>
 
   <div class="panel">
-    <h2>Carte des IRIS de Melesse</h2>
-    <p class="sub">Part des familles monoparentales par IRIS (RP 2022) — survolez ou cliquez un IRIS</p>
-    <div id="map"></div>
-    <p class="note">Contours IRIS 2024 (IGN / INSEE). Fond de carte : Plan IGN ou photo aérienne © IGN – Géoplateforme.</p>
-  </div>
-
-  <div class="panel">
     <h2>Méthode et sources</h2>
     <p class="note" style="margin-top:0">
       <b>Indicateur :</b> nombre de familles monoparentales / nombre total de familles × 100, le total incluant les couples sans enfant.<br>
-      <b>IRIS :</b> INSEE, RP 2022, base infra-communale « Couples – Familles – Ménages » (variables C22_FAM et C22_FAMMONO).<br>
       <b>Commune, EPCI, département, région, France :</b> INSEE, RP 2023, base communale « Couples – Familles – Ménages » ; les agrégats sont obtenus en sommant les effectifs communaux selon la table d'appartenance géographique (EPCI, département, région). France métropolitaine = communes hors départements d'outre-mer.<br>
       Les effectifs issus du recensement sont des estimations pondérées ; ils sont arrondis à l'unité dans les tableaux.
     </p>
@@ -79,11 +69,10 @@
 <footer>
   <div class="wrap">
     <span>Démonstrateur réalisé par <strong>COPAS</strong> – coopérative de conseil</span>
-    <span>Sources : INSEE, recensements de la population 2022 (IRIS) et 2023 (communes)</span>
+    <span>Sources : INSEE, recensement de la population 2023</span>
   </div>
 </footer>
 
-<script src="assets/leaflet/leaflet.js"></script>
 <script src="assets/data.js"></script>
 <script>
 (function(){
@@ -97,13 +86,12 @@
   const tb = document.querySelector('#tbl tbody');
   rows.forEach(r => {
     const tr = document.createElement('tr');
-    if (r.niveau === 'IRIS') tr.className = 'hl';
+    if (r.niveau === 'Commune') tr.className = 'hl';
     tr.innerHTML = `
       <td><span class="lvl">${r.niveau}</span>${r.lib}</td>
       <td class="num">${fmtN(r.fam)}</td>
       <td class="num">${fmtN(r.mono)}</td>
-      <td><div class="bar"><i style="width:${(r.part/maxPart*140).toFixed(0)}px"></i><b>${fmtP(r.part)}</b></div></td>
-      <td class="num">${r.annee}</td>`;
+      <td><div class="bar"><i style="width:${(r.part/maxPart*140).toFixed(0)}px"></i><b>${fmtP(r.part)}</b></div></td>`;
     tb.appendChild(tr);
   });
 
@@ -146,72 +134,6 @@
     document.getElementById('stripnote').innerHTML = `<b>Lecture :</b> avec ${f1(me.part)} % de familles monoparentales, Melesse se situe au-dessus du taux de son intercommunalité (${f1(med)} %), dans un éventail allant de ${f1(mn.part)} % (${esc(mn.lib)}) à ${f1(mx.part)} % (${esc(mx.lib)}).`;
   })();
 
-  /* ---- carte ---- */
-  const map = L.map('map', {scrollWheelZoom:false});
-  const geopf = (layer, fmt) => 'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' + layer + '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=' + fmt;
-  const planIGNgris = L.tileLayer(geopf('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'image/png'), {
-    maxZoom: 19, attribution: '© IGN – Géoplateforme', className: 'tiles-gris'
-  }).addTo(map);
-  const planIGN = L.tileLayer(geopf('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'image/png'), {
-    maxZoom: 19, attribution: '© IGN – Géoplateforme'
-  });
-  const orthoIGN = L.tileLayer(geopf('ORTHOIMAGERY.ORTHOPHOTOS', 'image/jpeg'), {
-    maxZoom: 19, attribution: '© IGN – Géoplateforme'
-  });
-  L.control.layers({'Plan IGN (gris)': planIGNgris, 'Plan IGN (couleur)': planIGN, 'Photo aérienne IGN': orthoIGN}, null, {position:'topright', collapsed:true}).addTo(map);
-
-  // rampe séquentielle (teal) entre 5 % et 18 %
-  const lo = 5, hi = 18;
-  const ramp = ['#e3f1ef','#a9d6d0','#5eb0a6','#0E7C74','#084d48'];
-  const color = p => {
-    const t = Math.max(0, Math.min(1, (p - lo) / (hi - lo)));
-    return ramp[Math.min(ramp.length - 1, Math.floor(t * ramp.length))];
-  };
-  const irisPart = code => { const r = rows.find(x => x.code === code); return r ? r.part : null; };
-
-  const layer = L.geoJSON(D.geojson, {
-    style: f => ({ color:'#fff', weight:2, fillColor: color(irisPart(f.properties.iris_code)), fillOpacity:.75 }),
-    onEachFeature: (f, l) => {
-      const r = rows.find(x => x.code === f.properties.iris_code);
-      l.bindTooltip(`<b>${f.properties.iris_name}</b><br>${fmtP(r.part)} de familles monoparentales`, {sticky:true});
-      l.bindPopup(`<div class="pop"><b>IRIS ${f.properties.iris_name}</b>
-        <div class="big">${fmtP(r.part)}</div>
-        <small>${fmtN(r.mono)} familles monoparentales sur ${fmtN(r.fam)} familles (RP ${r.annee})</small></div>`);
-      l.on('mouseover', () => l.setStyle({weight:3, fillOpacity:.9}));
-      l.on('mouseout', () => layer.resetStyle(l));
-    }
-  }).addTo(map);
-  map.fitBounds(layer.getBounds(), {padding:[20,20]});
-
-  // étiquettes au centre de chaque IRIS
-  // (l'IRIS Hors Agglomération entoure l'IRIS Agglomération : son étiquette est décalée vers l'ouest)
-  const layers = []; layer.eachLayer(l => layers.push(l));
-  layers.forEach(l => {
-    const b = l.getBounds(); let c = b.getCenter();
-    const other = layers.find(o => o !== l);
-    const w = bb => bb.getEast() - bb.getWest();
-    if (other && w(b) > w(other.getBounds())) {
-      // IRIS englobant : étiquette dans la partie est de la couronne
-      c = L.latLng(c.lat, b.getWest() + w(b) * 0.72);
-    } else if (other) {
-      // IRIS englobé (étroit) : étiquette juste à l'ouest de son contour
-      const ob = other.getBounds();
-      c = L.latLng(c.lat, b.getWest() - (ob.getEast() - ob.getWest()) * 0.13);
-    }
-    const r = rows.find(x => x.code === l.feature.properties.iris_code);
-    L.marker(c, {icon: L.divIcon({className:'', html:`<div style="display:inline-block;font:600 13px/1.2 var(--font);color:#1A1A1A;text-align:center;text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 4px #fff;white-space:nowrap;transform:translate(-50%,-50%)">${l.feature.properties.iris_name}<br><span style="font-size:16px">${fmtP(r.part)}</span></div>`, iconSize:[0,0]}), interactive:false}).addTo(map);
-  });
-
-  const legend = L.control({position:'bottomright'});
-  legend.onAdd = () => {
-    const d = L.DomUtil.create('div','legend');
-    const step = (hi - lo) / ramp.length;
-    d.innerHTML = '<div class="t">Familles monoparentales</div>' + ramp.map((c,i) =>
-      `<div><span class="sw" style="background:${c}"></span>${(lo+i*step).toLocaleString('fr-FR',{maximumFractionDigits:1})} – ${(lo+(i+1)*step).toLocaleString('fr-FR',{maximumFractionDigits:1})} %</div>`).join('') +
-      `<div style="margin-top:6px;color:#8a8a8a">Commune : ${fmtP(rows.find(r=>r.niveau==='Commune').part)} · France métro. : ${fmtP(rows.find(r=>r.code==='FRM').part)}</div>`;
-    return d;
-  };
-  legend.addTo(map);
 })();
 </script>
 </body>

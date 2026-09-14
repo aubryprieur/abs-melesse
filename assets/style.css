@@ -77,17 +77,6 @@ nav.main a.active,nav.main a:hover{color:var(--teal);border-bottom-color:var(--t
 .bar b{font-weight:600;font-size:14px}
 .tblwrap{overflow-x:auto}
 
-/* map */
-#map{height:520px;border-radius:10px;border:1px solid var(--line);background:#eef0ee}
-.legend{background:#fff;padding:8px 10px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15);font:12px/1.4 var(--font);color:var(--ink)}
-.legend .sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px;border:1px solid rgba(0,0,0,.1)}
-.legend .t{font-weight:600;margin-bottom:4px}
-.leaflet-container{font-family:var(--font)}
-.tiles-gris{filter:grayscale(1) brightness(1.06) contrast(.85)}
-.pop b{display:block;font-size:14px}
-.pop .big{font-size:22px;font-weight:700;color:var(--teal);margin:4px 0 2px}
-.pop small{color:var(--muted)}
-
 /* ranking bars */
 .rank{display:grid;grid-template-columns:180px 1fr 52px;gap:8px 10px;align-items:center;font-size:13px}
 .rank .n{text-align:right;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
