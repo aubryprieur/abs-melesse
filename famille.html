@@ -56,6 +56,14 @@
   </div>
 
   <div class="panel">
+    <h2>Position de Melesse parmi des communes comparables</h2>
+    <p class="sub">Huit communes de taille proche, de même profil de densité (« ceintures urbaines ») et géographiquement voisines (RP 2023)</p>
+    <div id="strip2"></div>
+    <p class="note" id="strip2list"></p>
+    <p class="note" id="strip2note"></p>
+  </div>
+
+  <div class="panel">
     <h2>Méthode et sources</h2>
     <p class="note" style="margin-top:0">
       <b>Indicateur :</b> nombre de familles monoparentales / nombre total de familles × 100, le total incluant les couples sans enfant.<br>
@@ -95,15 +103,15 @@
     tb.appendChild(tr);
   });
 
-  /* ---- position dans l'EPCI : graphique en ligne ---- */
-  (function(){
-    const vals = D.epci.map(c => c.part).sort((a,b)=>a-b);
-    const n = vals.length;
-    const med = rows.find(r => r.niveau === 'EPCI').part; // taux de l'EPCI (agrégé)
-    const mn = D.epci.reduce((a,c)=> c.part < a.part ? c : a);
-    const mx = D.epci.reduce((a,c)=> c.part > a.part ? c : a);
-    const me = D.epci.find(c => c.code === '35173');
-    const rang = D.epci.filter(c => c.part > me.part).length + 1;
+  /* ---- graphique de position : Melesse parmi un ensemble de communes ---- */
+  function drawStrip(opts){
+    const list = opts.communes;
+    const n = list.length;
+    const me = list.find(c => c.code === '35173');
+    const mn = list.reduce((a,c)=> c.part < a.part ? c : a);
+    const mx = list.reduce((a,c)=> c.part > a.part ? c : a);
+    const rang = list.filter(c => c.part > me.part).length + 1;
+    const ref = opts.ref;
 
     const W = 860, H = 190, L = 24, R = 24, y = 96;
     const lo = 0, hi = Math.ceil(mx.part / 2) * 2 + 2;
@@ -111,15 +119,19 @@
     const f1 = v => v.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1});
     const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
 
-    let g = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Position de Melesse parmi les communes de l'EPCI" style="font-family:var(--font);max-width:${W}px;display:block;margin:6px auto 0">`;
+    let g = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${opts.aria}" style="font-family:var(--font);max-width:${W}px;display:block;margin:6px auto 0">`;
     g += `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#d9d5cc" stroke-width="2" stroke-linecap="round"/>`;
     for (let v = 0; v <= hi; v += 2) {
       g += `<line x1="${x(v)}" x2="${x(v)}" y1="${y-4}" y2="${y+4}" stroke="#d9d5cc"/>`;
       g += `<text x="${x(v)}" y="${y+20}" font-size="10" fill="#8a8a8a" text-anchor="middle">${v} %</text>`;
     }
-    g += `<line x1="${x(med)}" x2="${x(med)}" y1="${y-30}" y2="${y+8}" stroke="#D99A1B" stroke-width="2" stroke-dasharray="3 3"/>`;
-    g += `<text x="${x(med)}" y="${y-36}" font-size="11" fill="#D99A1B" font-weight="600" text-anchor="middle">EPCI ${f1(med)} %</text>`;
-    D.epci.forEach(c => { if (c.code !== me.code) g += `<circle cx="${x(c.part)}" cy="${y}" r="5" fill="#fff" stroke="#9A9A9A" stroke-width="1.5"><title>${esc(c.lib)} : ${f1(c.part)} %</title></circle>`; });
+    g += `<line x1="${x(ref)}" x2="${x(ref)}" y1="${y-30}" y2="${y+8}" stroke="#D99A1B" stroke-width="2" stroke-dasharray="3 3"/>`;
+    // si le repère est proche de Melesse, on décale son étiquette du côté opposé pour éviter le chevauchement
+    const close = Math.abs(x(ref) - x(me.part)) < 70;
+    const refAnchor = close ? (ref < me.part ? 'end' : 'start') : 'middle';
+    const refDx = close ? (ref < me.part ? -6 : 6) : 0;
+    g += `<text x="${x(ref) + refDx}" y="${y-36}" font-size="11" fill="#D99A1B" font-weight="600" text-anchor="${refAnchor}">${opts.refLabel} ${f1(ref)} %</text>`;
+    list.forEach(c => { if (c.code !== me.code) g += `<circle cx="${x(c.part)}" cy="${y}" r="5" fill="#fff" stroke="#9A9A9A" stroke-width="1.5"><title>${esc(c.lib)} : ${f1(c.part)} %</title></circle>`; });
     g += `<text x="${x(mn.part)}" y="${y+42}" font-size="11" fill="#4a4a4a" text-anchor="start">Min. ${f1(mn.part)} %</text>`;
     g += `<text x="${x(mn.part)}" y="${y+56}" font-size="10" fill="#8a8a8a" text-anchor="start">${esc(mn.lib)}</text>`;
     g += `<text x="${x(mx.part)}" y="${y+42}" font-size="11" fill="#4a4a4a" text-anchor="end">Max. ${f1(mx.part)} %</text>`;
@@ -128,11 +140,30 @@
     g += `<circle cx="${x(me.part)}" cy="${y}" r="8" fill="#0E7C74" stroke="#fff" stroke-width="2"><title>Melesse : ${f1(me.part)} %</title></circle>`;
     g += `<text x="${x(me.part)}" y="${y-58}" font-size="13" fill="#0E7C74" font-weight="700" text-anchor="middle">Melesse ${f1(me.part)} %</text>`;
     g += `<text x="${x(me.part)}" y="${y-70}" font-size="10" fill="#0E7C74" text-anchor="middle">${rang}e sur ${n} communes</text>`;
-    g += `<circle cx="${L+4}" cy="${H-10}" r="4" fill="#fff" stroke="#9A9A9A" stroke-width="1.5"/><text x="${L+13}" y="${H-6}" font-size="10" fill="#8a8a8a">une commune de l'EPCI (survolez pour le nom)</text>`;
+    g += `<circle cx="${L+4}" cy="${H-10}" r="4" fill="#fff" stroke="#9A9A9A" stroke-width="1.5"/><text x="${L+13}" y="${H-6}" font-size="10" fill="#8a8a8a">${opts.legend} (survolez pour le nom)</text>`;
     g += `</svg>`;
-    document.getElementById('strip').innerHTML = g;
-    document.getElementById('stripnote').innerHTML = `<b>Lecture :</b> avec ${f1(me.part)} % de familles monoparentales, Melesse se situe au-dessus du taux de son intercommunalité (${f1(med)} %), dans un éventail allant de ${f1(mn.part)} % (${esc(mn.lib)}) à ${f1(mx.part)} % (${esc(mx.lib)}).`;
-  })();
+    document.getElementById(opts.el).innerHTML = g;
+    if (opts.listEl) {
+      const sorted = [...list].sort((a,b)=>b.part-a.part);
+      document.getElementById(opts.listEl).innerHTML = sorted.map(c => c.code === me.code ? `<b>${esc(c.lib)} ${f1(c.part)} %</b>` : `${esc(c.lib)} ${f1(c.part)} %`).join(' · ');
+    }
+    const pos = me.part > ref ? 'au-dessus' : 'en dessous';
+    document.getElementById(opts.noteEl).innerHTML = `<b>Lecture :</b> avec ${f1(me.part)} % de familles monoparentales, Melesse se situe ${pos} ${opts.refText} (${f1(ref)} %), dans un éventail allant de ${f1(mn.part)} % (${esc(mn.lib)}) à ${f1(mx.part)} % (${esc(mx.lib)}).`;
+  }
+
+  drawStrip({
+    el:'strip', noteEl:'stripnote', communes: D.epci,
+    ref: rows.find(r => r.niveau === 'EPCI').part, refLabel:'EPCI', refText:"du taux de son intercommunalité",
+    legend:"une commune de l'EPCI", aria:"Position de Melesse parmi les communes de l'EPCI"
+  });
+
+  const comp = D.comparables;
+  const compRef = comp.reduce((a,c)=>a+c.mono,0) / comp.reduce((a,c)=>a+c.fam,0) * 100;
+  drawStrip({
+    el:'strip2', noteEl:'strip2note', listEl:'strip2list', communes: comp,
+    ref: compRef, refLabel:'Ensemble', refText:"du taux de l'ensemble des communes comparables (Melesse incluse)",
+    legend:"une commune comparable", aria:"Position de Melesse parmi des communes comparables"
+  });
 
 })();
 </script>
