@@ -14,8 +14,7 @@ a{color:var(--teal)}
 .topbar{background:var(--card);border-bottom:1px solid var(--line)}
 .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
-.brand .logo{height:58px;width:auto;display:block}
-.topbar .wrap{min-height:80px}
+.brand .logo{height:44px;width:auto;display:block}
 .brand strong{font-size:16px;letter-spacing:.2px}
 .brand span{display:block;font-size:12px;color:var(--muted);margin-top:-2px}
 nav.main a{text-decoration:none;color:var(--ink-2);margin-left:18px;font-size:14px;padding:6px 0;border-bottom:2px solid transparent}
