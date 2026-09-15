@@ -49,7 +49,7 @@ nav.main a.active,nav.main a:hover{color:var(--teal);border-bottom-color:var(--t
 .card.soon .ico{background:#eee;color:var(--muted)}
 
 /* page header */
-.pagehead{padding:36px 0 8px}
+.pagehead{padding:28px 0 4px}
 .crumbs{font-size:13px;color:var(--muted);margin-bottom:8px}
 .crumbs a{color:var(--muted);text-decoration:none}
 .crumbs a:hover{color:var(--teal)}
@@ -95,3 +95,21 @@ nav.main a.active,nav.main a:hover{color:var(--teal);border-bottom-color:var(--t
 
 footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:12.5px;margin-top:24px}
 footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* bloc thématique compact */
+.bloc{padding:18px 22px 14px}
+.bloc .bloc-head{margin-bottom:8px}
+.bloc .bloc-head h2{font-size:19px}
+.bloc .bloc-head .sub{margin-bottom:0}
+.bloc .tbl td{padding:6px 10px}
+.bloc .tbl th{padding:6px 10px}
+.bloc .note{margin-top:8px;font-size:12px}
+.strips{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.strips h3{font-size:14px;margin:0 0 2px}
+.strips .sub{margin:0 0 4px;font-size:12px}
+.strips svg{margin-top:0 !important}
+.methode{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+.methode summary{font-size:12.5px;color:var(--muted);cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:6px}
+.methode summary::before{content:'▸';font-size:11px}
+.methode[open] summary::before{content:'▾'}
+.methode summary::-webkit-details-marker{display:none}

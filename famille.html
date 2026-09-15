@@ -24,16 +24,19 @@
 <section class="pagehead">
   <div class="wrap">
     <div class="crumbs"><a href="index.html">Accueil</a> › Famille</div>
-    <h1>Part des familles monoparentales dans l'ensemble des familles</h1>
-    <p>Nombre de familles monoparentales rapporté à l'ensemble des familles, couples sans enfant compris. L'indicateur est calculé pour Melesse, puis agrégé à partir des données communales pour l'intercommunalité, le département, la région et la France métropolitaine.</p>
+    <h1>Famille</h1>
+    <p>Structure des familles à Melesse, comparée à l'intercommunalité, au département, à la région et à la France métropolitaine. Chaque bloc traite un indicateur.</p>
   </div>
 </section>
 
 <div class="wrap">
 
-  <div class="panel">
-    <h2>Tableau de comparaison</h2>
-    <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%), RP 2023, et évolution du nombre de familles monoparentales entre les RP 2017 et 2023 — familles = couples sans enfant + couples avec enfant(s) + familles monoparentales</p>
+  <section class="panel bloc">
+    <div class="bloc-head">
+      <h2>Familles monoparentales</h2>
+      <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%), RP 2023, et évolution du nombre de familles monoparentales entre les RP 2017 et 2023</p>
+    </div>
+
     <div class="tblwrap">
     <table class="tbl" id="tbl">
       <thead><tr>
@@ -46,33 +49,34 @@
       <tbody></tbody>
     </table>
     </div>
-    <p class="note"><b>Lecture :</b> à Melesse, 12,2 % des familles sont des familles monoparentales. La commune se situe au-dessus de son intercommunalité (10,2 %) mais en dessous du département (13,6 %), de la région (13,8 %) et de la France métropolitaine (16,8 %). Entre 2017 et 2023, le nombre de familles monoparentales y a progressé de 22,8 % (+50 familles), soit nettement plus vite que dans l'intercommunalité (+8,8 %), le département (+14,1 %), la région (+12,3 %) ou la France métropolitaine (+10,2 %) — une hausse à relier à la forte croissance du nombre de familles à Melesse sur la période (+15,2 %).</p>
-  </div>
+    <p class="note"><b>Lecture :</b> à Melesse, 12,2 % des familles sont des familles monoparentales, au-dessus de l'intercommunalité (10,2 %) mais en dessous du département (13,6 %), de la région (13,8 %) et de la France métropolitaine (16,8 %). Entre 2017 et 2023, leur nombre a progressé de 22,8 % (+50 familles), plus vite qu'à tout autre échelon — une hausse à relier à la forte croissance du nombre total de familles dans la commune (+15,2 %) : la part ne gagne que 0,8 point.</p>
 
-  <div class="panel">
-    <h2>Position de Melesse dans son intercommunalité</h2>
-    <p class="sub">Part des familles monoparentales dans les 19 communes de la CC Val d'Ille-Aubigné (RP 2023)</p>
-    <div id="strip"></div>
-    <p class="note" id="stripnote"></p>
-  </div>
+    <div class="grid2 strips">
+      <div>
+        <h3>Position dans l'intercommunalité</h3>
+        <p class="sub">19 communes de la CC Val d'Ille-Aubigné, RP 2023</p>
+        <div id="strip"></div>
+        <p class="note" id="stripnote"></p>
+      </div>
+      <div>
+        <h3>Position parmi des communes comparables</h3>
+        <p class="sub">8 communes de taille proche, profil « ceintures urbaines », voisines</p>
+        <div id="strip2"></div>
+        <p class="note" id="strip2list"></p>
+        <p class="note" id="strip2note"></p>
+      </div>
+    </div>
 
-  <div class="panel">
-    <h2>Position de Melesse parmi des communes comparables</h2>
-    <p class="sub">Huit communes de taille proche, de même profil de densité (« ceintures urbaines ») et géographiquement voisines (RP 2023)</p>
-    <div id="strip2"></div>
-    <p class="note" id="strip2list"></p>
-    <p class="note" id="strip2note"></p>
-  </div>
-
-  <div class="panel">
-    <h2>Méthode et sources</h2>
-    <p class="note" style="margin-top:0">
-      <b>Indicateur :</b> nombre de familles monoparentales / nombre total de familles × 100, le total incluant les couples sans enfant.<br>
-      <b>Commune, EPCI, département, région, France :</b> INSEE, RP 2023, base communale « Couples – Familles – Ménages » ; les agrégats sont obtenus en sommant les effectifs communaux selon la table d'appartenance géographique (EPCI, département, région). France métropolitaine = communes hors départements d'outre-mer.<br>
-      <b>Évolution 2017-2023 :</b> INSEE, RP 2017 et RP 2023, bases communales en géographie courante ; taux d'évolution du nombre de familles monoparentales sur six ans (huit communes sans donnée en 2017 sont exclues de l'agrégat France métropolitaine).<br>
-      Les effectifs issus du recensement sont des estimations pondérées ; ils sont arrondis à l'unité dans les tableaux.
-    </p>
-  </div>
+    <details class="methode">
+      <summary>Méthode et sources</summary>
+      <p class="note" style="margin-top:6px">
+        <b>Indicateur :</b> nombre de familles monoparentales / nombre total de familles × 100, le total incluant les couples sans enfant.<br>
+        <b>Commune, EPCI, département, région, France :</b> INSEE, RP 2023, base communale « Couples – Familles – Ménages » ; les agrégats sont obtenus en sommant les effectifs communaux selon la table d'appartenance géographique (EPCI, département, région). France métropolitaine = communes hors départements d'outre-mer.<br>
+        <b>Évolution 2017-2023 :</b> INSEE, RP 2017 et RP 2023, bases communales en géographie courante ; taux d'évolution du nombre de familles monoparentales sur six ans (huit communes sans donnée en 2017 sont exclues de l'agrégat France métropolitaine).<br>
+        Les effectifs issus du recensement sont des estimations pondérées ; ils sont arrondis à l'unité dans les tableaux.
+      </p>
+    </details>
+  </section>
 
 </div>
 
@@ -123,7 +127,7 @@
     const rang = list.filter(c => c.part > me.part).length + 1;
     const ref = opts.ref;
 
-    const W = 860, H = 190, L = 24, R = 24, y = 96;
+    const W = opts.W || 860, H = 190, L = 24, R = 24, y = 96;
     const lo = 0, hi = Math.ceil(mx.part / 2) * 2 + 2;
     const x = v => L + (v - lo) / (hi - lo) * (W - L - R);
     const f1 = v => v.toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1});
@@ -158,20 +162,20 @@
       document.getElementById(opts.listEl).innerHTML = sorted.map(c => c.code === me.code ? `<b>${esc(c.lib)} ${f1(c.part)} %</b>` : `${esc(c.lib)} ${f1(c.part)} %`).join(' · ');
     }
     const pos = me.part > ref ? 'au-dessus' : 'en dessous';
-    document.getElementById(opts.noteEl).innerHTML = `<b>Lecture :</b> avec ${f1(me.part)} % de familles monoparentales, Melesse se situe ${pos} ${opts.refText} (${f1(ref)} %), dans un éventail allant de ${f1(mn.part)} % (${esc(mn.lib)}) à ${f1(mx.part)} % (${esc(mx.lib)}).`;
+    document.getElementById(opts.noteEl).innerHTML = `<b>Lecture :</b> Melesse (${f1(me.part)} %) se situe ${pos} ${opts.refText} (${f1(ref)} %) ; éventail de ${f1(mn.part)} % (${esc(mn.lib)}) à ${f1(mx.part)} % (${esc(mx.lib)}).`;
   }
 
   drawStrip({
-    el:'strip', noteEl:'stripnote', communes: D.epci,
-    ref: rows.find(r => r.niveau === 'EPCI').part, refLabel:'EPCI', refText:"du taux de son intercommunalité",
+    el:'strip', noteEl:'stripnote', communes: D.epci, W: 520,
+    ref: rows.find(r => r.niveau === 'EPCI').part, refLabel:'EPCI', refText:"du taux de l'EPCI",
     legend:"une commune de l'EPCI", aria:"Position de Melesse parmi les communes de l'EPCI"
   });
 
   const comp = D.comparables;
   const compRef = comp.reduce((a,c)=>a+c.mono,0) / comp.reduce((a,c)=>a+c.fam,0) * 100;
   drawStrip({
-    el:'strip2', noteEl:'strip2note', listEl:'strip2list', communes: comp,
-    ref: compRef, refLabel:'Ensemble', refText:"du taux de l'ensemble des communes comparables (Melesse incluse)",
+    el:'strip2', noteEl:'strip2note', listEl:'strip2list', communes: comp, W: 520,
+    ref: compRef, refLabel:'Ensemble', refText:"du taux de l'ensemble des communes comparables",
     legend:"une commune comparable", aria:"Position de Melesse parmi des communes comparables"
   });
 
