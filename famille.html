@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Famille – Observatoire social de Melesse</title>
-<link rel="stylesheet" href="assets/style.css?v=3">
+<link rel="stylesheet" href="assets/style.css?v=4">
 </head>
 <body>
 
@@ -33,8 +33,14 @@
 
   <section class="panel bloc">
     <div class="bloc-head">
-      <h2>Familles monoparentales</h2>
-      <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%), RP 2023, et évolution du nombre de familles monoparentales entre les RP 2017 et 2023</p>
+      <div>
+        <h2>Familles monoparentales</h2>
+        <p class="sub">Part des familles monoparentales dans l'ensemble des familles (%), RP 2023, et évolution du nombre de familles monoparentales entre les RP 2017 et 2023</p>
+      </div>
+      <button class="btn-xlsx" id="dl-xlsx" type="button" title="Télécharger les données de ce bloc au format Excel">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Excel
+      </button>
     </div>
 
     <div class="tblwrap">
@@ -177,6 +183,41 @@
     el:'strip2', noteEl:'strip2note', listEl:'strip2list', communes: comp, W: 520,
     ref: compRef, refLabel:'Ensemble', refText:"du taux de l'ensemble des communes comparables",
     legend:"une commune comparable", aria:"Position de Melesse parmi des communes comparables"
+  });
+
+  /* ---- export Excel du bloc ---- */
+  document.getElementById('dl-xlsx').addEventListener('click', function(){
+    const btn = this;
+    const run = () => {
+      const wb = XLSX.utils.book_new();
+      const f1 = v => Math.round(v * 10) / 10;
+      // Feuille 1 : tableau de comparaison
+      const rows1 = [
+        ["Familles monoparentales – tableau de comparaison"],
+        ["Source : INSEE, recensements de la population 2017 et 2023, bases communales (agrégats calculés par COPAS)"],
+        [],
+        ["Niveau","Territoire","Familles 2023","Familles monoparentales 2023","Part des familles monoparentales 2023 (%)","Familles 2017","Familles monoparentales 2017","Part 2017 (%)","Évolution 2017-2023 du nb de familles monoparentales (%)","Évolution 2017-2023 (nombre)"]
+      ];
+      rows.forEach(r => rows1.push([r.niveau, r.lib, Math.round(r.fam), Math.round(r.mono), f1(r.part), Math.round(r.fam17), Math.round(r.mono17), f1(r.mono17/r.fam17*100), f1((r.mono-r.mono17)/r.mono17*100), Math.round(r.mono-r.mono17)]));
+      const ws1 = XLSX.utils.aoa_to_sheet(rows1);
+      ws1['!cols'] = [{wch:13},{wch:26},{wch:14},{wch:18},{wch:20},{wch:14},{wch:18},{wch:12},{wch:24},{wch:16}];
+      XLSX.utils.book_append_sheet(wb, ws1, "Comparaison");
+      // Feuille 2 : communes de l'EPCI
+      const mk = (titre, list) => {
+        const a = [[titre],["Source : INSEE, RP 2023"],[],["Code commune","Commune","Familles 2023","Familles monoparentales 2023","Part (%)"]];
+        [...list].sort((x,y)=>y.part-x.part).forEach(c => a.push([c.code, c.lib, Math.round(c.fam), Math.round(c.mono), f1(c.part)]));
+        const ws = XLSX.utils.aoa_to_sheet(a); ws['!cols'] = [{wch:13},{wch:28},{wch:14},{wch:24},{wch:10}]; return ws;
+      };
+      XLSX.utils.book_append_sheet(wb, mk("Communes de la CC Val d'Ille-Aubigné", D.epci), "Communes EPCI");
+      XLSX.utils.book_append_sheet(wb, mk("Communes comparables", D.comparables), "Communes comparables");
+      XLSX.writeFile(wb, "Melesse_familles_monoparentales.xlsx");
+      btn.disabled = false;
+    };
+    if (window.XLSX) return run();
+    btn.disabled = true;
+    const sc = document.createElement('script'); sc.src = 'assets/xlsx.mini.min.js'; sc.onload = run;
+    sc.onerror = () => { btn.disabled = false; alert("Le module d'export n'a pas pu être chargé."); };
+    document.head.appendChild(sc);
   });
 
 })();

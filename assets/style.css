@@ -98,7 +98,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 /* bloc thématique compact */
 .bloc{padding:18px 22px 14px}
-.bloc .bloc-head{margin-bottom:8px}
+.bloc .bloc-head{margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.btn-xlsx{flex:none;display:inline-flex;align-items:center;gap:6px;font:600 13px var(--font);color:var(--teal);background:var(--teal-soft);border:1px solid #bfe0dc;border-radius:8px;padding:7px 12px;cursor:pointer;white-space:nowrap;margin-top:2px}
+.btn-xlsx:hover{background:#d3ebe8}
+.btn-xlsx:disabled{opacity:.5;cursor:wait}
 .bloc .bloc-head h2{font-size:19px}
 .bloc .bloc-head .sub{margin-bottom:0}
 .bloc .tbl td{padding:6px 10px}
